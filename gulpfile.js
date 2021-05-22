@@ -5,6 +5,7 @@ var less = require('gulp-less');
 var minifyCSS = require('gulp-cssnano');
 var prefix = require('gulp-autoprefixer');
 var jshint = require('gulp-jshint');
+var del = require('del');
 
 gulp.task('test', function(done) {
     console.log('Hello World!');
@@ -32,3 +33,7 @@ gulp.task('test', function() {
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
 });
+
+gulp.task('clean', function() {
+    return del(['dist']);
+})
