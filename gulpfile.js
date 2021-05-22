@@ -12,28 +12,39 @@ gulp.task('test', function(done) {
     done()
 });
 
-gulp.task('scripts', function() {
-    return gulp.src('app/scripts/**/*.js')
-        .pipe(concat('main.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('dist/scripts'));
+gulp.task('scripts', function(done) {
+    gulp.series('tests', function(done2) {
+        gulp.src('app/scripts/**/*.js')
+            .pipe(concat('main.min.js'))
+            .pipe(uglify())
+            .pipe(gulp.dest('dist/scripts'));
+        done2();
+    });
+    done();
 })
 
-gulp.task('styles', function() {
-    return gulp.src('app/styles/main.less')
+gulp.task('styles', function(done) {
+    gulp.src('app/styles/main.less')
         .pipe(less())
         .pipe(minifyCSS())
         .pipe(prefix())
         .pipe(gulp.dest('dist/styles'));
+    done();
 });
 
-gulp.task('test', function() {
-    return gulp.src([ 'app/scripts/main.js', '!app/scripts/vendor/**/*.js' ]) // 
+gulp.task('tests', function(done) {
+    gulp.src([ 'app/scripts/main.js', '!app/scripts/vendor/**/*.js' ]) // 
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
+    done();
 });
 
 gulp.task('clean', function() {
     return del(['dist']);
+})
+
+gulp.task('default', function(done) {
+    gulp.series("clean", gulp.parallel("styles", "scripts"));
+    done();
 })
